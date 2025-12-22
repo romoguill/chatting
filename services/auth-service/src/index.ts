@@ -1,10 +1,11 @@
-import { createApp } from "./app";
 import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
-import { SERVICE_NAME } from "./utils/constants";
-import { Server } from "node:https";
 import { IncomingMessage, ServerResponse } from "node:http";
-import { connectDb } from "./db/sequelize";
+import { Server } from "node:https";
+import { createApp } from "./app";
+import { closeDb, connectDb } from "./db/sequelize";
+import { syncModels } from "./models";
+import { SERVICE_NAME } from "./utils/constants";
 
 const main = async () => {
   const app = createApp();
@@ -13,6 +14,7 @@ const main = async () => {
   // ---- DB connection ----
   try {
     await connectDb();
+    await syncModels();
   } catch (error) {
     logger.error(error, `Error starting ${SERVICE_NAME}`);
     process.exit(1);
@@ -36,7 +38,8 @@ const main = async () => {
     logger.info({ serviceName: SERVICE_NAME }, "Shutting down");
 
     // TODO: Add shutdown logic
-    Promise.all([])
+    // Close DB,
+    Promise.all([closeDb()])
       .catch((error) => logger.error({ error }, "Error shutting down"))
       .finally(() => server.close());
   };
