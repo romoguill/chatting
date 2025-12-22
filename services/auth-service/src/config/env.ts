@@ -8,6 +8,10 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(4001),
+  AUTH_DB_URL: z
+    .url()
+    .default("postgresql://postgres:postgres@localhost:5432/chatting_auth"),
+  AUTH_DB_SSL: z.boolean().default(false),
 });
 
 type Env = z.infer<typeof envSchema>;
