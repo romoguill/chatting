@@ -11,7 +11,7 @@ const envSchema = z.object({
   AUTH_DB_URL: z
     .url()
     .default("postgresql://postgres:postgres@localhost:5432/chatting_auth"),
-  AUTH_DB_SSL: z.boolean().default(false),
+  AUTH_DB_SSL: z.coerce.boolean().default(false),
 });
 
 type Env = z.infer<typeof envSchema>;

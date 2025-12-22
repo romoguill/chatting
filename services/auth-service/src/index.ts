@@ -4,10 +4,19 @@ import { logger } from "@/utils/logger";
 import { SERVICE_NAME } from "./utils/constants";
 import { Server } from "node:https";
 import { IncomingMessage, ServerResponse } from "node:http";
+import { connectDb } from "./db/sequelize";
 
 const main = async () => {
   const app = createApp();
   let server: Server;
+
+  // ---- DB connection ----
+  try {
+    await connectDb();
+  } catch (error) {
+    logger.error(error, `Error starting ${SERVICE_NAME}`);
+    process.exit(1);
+  }
 
   // ---- Start server ----
   try {
