@@ -1,11 +1,21 @@
-import { createApp } from "./app.js";
+import { createApp } from "./app";
+import { env } from "@/config/env";
+import { logger } from "@/utils/logger";
+import { SERVICE_NAME } from "./utils/constants";
 
 const main = async () => {
   const app = createApp();
-  const port = 3000;
   try {
-    app.listen(port, () => console.log(`Server listening on port ${port}`));
-  } catch (error) {}
+    app.listen(env.PORT, () =>
+      logger.info(
+        { port: env.PORT },
+        `${SERVICE_NAME} is running on port ${env.PORT}`
+      )
+    );
+  } catch (error) {
+    logger.error(error, `Error starting ${SERVICE_NAME}`);
+    process.exit(1);
+  }
 };
 
-main();
+void main();
