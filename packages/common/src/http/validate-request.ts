@@ -41,9 +41,14 @@ export const validaRequest = (schema: RequestValidationSchema) => {
     } catch (error) {
       if (error instanceof ZodError) {
         next(
-          new HttpError(400, "Bad request", { issues: formattedError(error) }),
+          new HttpError(400, "Validation error", {
+            issues: formattedError(error),
+          }),
         );
+        return;
       }
+
+      next(error);
     }
   };
 };

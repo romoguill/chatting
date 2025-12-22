@@ -1,0 +1,21 @@
+services:
+  auth-db:
+    container_name: chatting_auth-db
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME:-chatting_auth}
+      POSTGRES_USER: ${AUTH_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:-postgres}
+    ports:
+      - ${AUTH_DB_PORT:-5432}:5432
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - chatting_network
+
+volumes:
+  auth-db-data:
+
+networks:
+  chatting_network:
+    driver: bridge
