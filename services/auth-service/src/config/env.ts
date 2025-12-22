@@ -12,6 +12,10 @@ const envSchema = z.object({
     .url()
     .default("postgresql://postgres:postgres@localhost:5432/chatting_auth"),
   AUTH_DB_SSL: z.coerce.boolean().default(false),
+  JWT_SECRET: z.string().min(32),
+  JWT_EXPIRES_IN: z.templateLiteral([z.number(), "d"]).default("1d"),
+  JWT_REFRESH_SECRET: z.string().min(32),
+  JWT_REFRESH_EXPIRES_IN: z.templateLiteral([z.number(), "d"]).default("30d"),
 });
 
 type Env = z.infer<typeof envSchema>;
