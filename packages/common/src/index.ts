@@ -1,3 +1,3 @@
 export type { Logger } from "pino";
-export * from "./logger";
-export * from "./envConfig";
+export * from "./logger.js";
+export * from "./envConfig.js";
