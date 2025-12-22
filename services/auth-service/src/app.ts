@@ -21,7 +21,7 @@ export function createApp(): Application {
 
   // ---- Routes ----
   app.use("/api/v1/health", (_req, res) => res.sendStatus(200));
-  app.use("/api/v1/error", (_req, res) => {
+  app.use("/api/v1/error", () => {
     throw new HttpError(400, "Testing error", { cause: "Test" });
   });
 
