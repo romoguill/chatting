@@ -19,10 +19,13 @@
   "packageManager": "pnpm@10.15.1",
   "dependencies": {
     "@chatting/common": "workspace:^",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "helmet": "^8.1.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6"
   }
 }
