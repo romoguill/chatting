@@ -1,18 +1,14 @@
-import { z } from "zod";
-import { HttpError } from "../errors/http-error";
 import type { NextFunction, Request, Response } from "express";
-import { ZodError, ZodType, ZodObject } from "zod";
+import * as z from "zod";
+import { HttpError } from "../errors/http-error";
 
-type ParamsSchema = Record<string, string>;
-type QuerySchema = Record<string, unknown>;
+export type RequestValidationSchema = z.ZodObject<{
+  body: z.ZodOptional<z.ZodObject>;
+  params: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+  query: z.ZodOptional<z.ZodObject<Record<string, z.ZodType<string>>>>;
+}>;
 
-export interface RequestValidationSchema {
-  body?: ZodObject;
-  params?: ZodObject<Record<string, ZodType<string>>>;
-  query?: ZodObject<Record<string, ZodType<string | string[]>>>;
-}
-
-const formattedError = (error: ZodError) => {
+const formattedError = (error: z.ZodError) => {
   return error.issues.map((e) => ({
     path: e.path.join("."),
     message: e.message,
@@ -22,24 +18,14 @@ const formattedError = (error: ZodError) => {
 export const validaRequest = (schema: RequestValidationSchema) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (schema.body) {
-        const parsedBody = schema.body.parse(req.body);
-        req.body = parsedBody;
-      }
-
-      if (schema.params) {
-        const parsedParams = schema.params.parse(req.params);
-        req.params = parsedParams;
-      }
-
-      if (schema.query) {
-        const parsedQuery = schema.query.parse(req.query);
-        req.query = parsedQuery;
-      }
+      const parsed = schema.parse(req);
+      req.body = parsed.body;
+      req.params = parsed.params ?? {};
+      req.query = parsed.query ?? {};
 
       next();
     } catch (error) {
-      if (error instanceof ZodError) {
+      if (error instanceof z.ZodError) {
         next(
           new HttpError(400, "Validation error", {
             issues: formattedError(error),
