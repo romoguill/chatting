@@ -1,19 +1,22 @@
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
 
-export default defineConfig([
+export default tseslint.config(
   {
     ignores: ["**/dist/**", "**/node_modules/**"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  ...tseslint.configs.stylistic,
   {
+    files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
     languageOptions: {
       globals: {
         ...globals.node,
+      },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
@@ -23,8 +26,19 @@ export default defineConfig([
         "error",
         { argsIgnorePattern: "^_" },
       ],
-      "no-unused-vars": "error",
       "no-unused-expressions": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
     },
   },
-]);
+  {
+    files: ["eslint.config.mts"],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+        project: false,
+      },
+    },
+  },
+);
