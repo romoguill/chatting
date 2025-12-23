@@ -27,7 +27,6 @@ export default tseslint.config(
         { argsIgnorePattern: "^_" },
       ],
       "no-unused-expressions": "error",
-      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unsafe-assignment": "error",
     },
   },

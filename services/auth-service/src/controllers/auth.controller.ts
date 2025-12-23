@@ -1,4 +1,4 @@
-import { apiHandler } from "@chatting/common";
+import { apiHandler, BodySchema, z } from "@chatting/common";
 import { RequestHandler } from "express";
 import { register } from "../services/auth.service";
 

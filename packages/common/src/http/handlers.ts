@@ -1,14 +1,10 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { RequestValidationSchema, validaRequest } from "./validate-request";
-import z from "zod";
 
-export type ApiHandler<
-  T extends RequestValidationSchema = RequestValidationSchema,
-> = (
-  req: Request<z.infer<T["params"]>, T["body"], T["query"]>,
-  res: Response<T>,
+export type ApiHandler<TParams, TQuery, TBody> = (
+  req: Request<TParams, unknown, TBody, TQuery>,
+  res: Response,
   next: NextFunction,
-) => Promise<unknown>;
+) => Promise<void>;
 
 type ErrorForwarder = (error: Error) => void;
 
@@ -20,15 +16,12 @@ const forwardError = (nextFn: ErrorForwarder, error: unknown) => {
   nextFn(toError(error));
 };
 
-// Integrate express error handling into controller util
-export const apiHandler = <
-  T extends RequestValidationSchema = RequestValidationSchema,
->(
-  schema: T,
-) => {
-  return (handler: ApiHandler<T>): RequestHandler =>
-    (req, res, next) =>
-      validaRequest(schema)(req, res, () =>
-        handler(req, res, next).catch((error) => forwardError(next, error)),
-      );
+export const apiHandler = <TParams, TQuery, TBody>(
+  handler: ApiHandler<TParams, TQuery, TBody>,
+): RequestHandler<TParams, unknown, TBody, TQuery> => {
+  return (req, res, next) => {
+    handler(req, res, next).catch((error: unknown) =>
+      forwardError(next, error),
+    );
+  };
 };

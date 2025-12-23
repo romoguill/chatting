@@ -1,12 +1,16 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, RequestHandler } from "express";
 import * as z from "zod";
 import { HttpError } from "../errors/http-error";
 
-export type RequestValidationSchema = z.ZodObject<{
-  body: z.ZodOptional<z.ZodObject>;
-  params: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
-  query: z.ZodOptional<z.ZodObject<Record<string, z.ZodType<string>>>>;
-}>;
+export type BodySchema = z.ZodType;
+export type ParamsSchema = z.ZodType;
+export type QuerySchema = z.ZodType;
+
+export type RequestValidation<TParams, TQuery, TBody> = {
+  params?: z.ZodType<TParams>;
+  query?: z.ZodType<TQuery>;
+  body?: z.ZodType<TBody>;
+};
 
 const formattedError = (error: z.ZodError) => {
   return error.issues.map((e) => ({
@@ -15,13 +19,20 @@ const formattedError = (error: z.ZodError) => {
   }));
 };
 
-export const validaRequest = (schema: RequestValidationSchema) => {
-  return (req: Request, _res: Response, next: NextFunction) => {
+export const validateRequest = <TParams, TQuery, TBody>(
+  schemas: RequestValidation<TParams, TQuery, TBody>,
+): RequestHandler<TParams, unknown, TBody, TQuery> => {
+  return (req, _res, next: NextFunction) => {
     try {
-      const parsed = schema.parse(req);
-      req.body = parsed.body;
-      req.params = parsed.params ?? {};
-      req.query = parsed.query ?? {};
+      if (schemas.body) {
+        req.body = schemas.body.parse(req.body);
+      }
+      if (schemas.params) {
+        req.params = schemas.params.parse(req.params);
+      }
+      if (schemas.query) {
+        req.query = schemas.query.parse(req.query);
+      }
 
       next();
     } catch (error) {
