@@ -11,6 +11,7 @@ import {
 import { Transaction } from "sequelize";
 import { env } from "../config/env";
 import { UserDto } from "../dtos/user.dto";
+import { logger } from "../utils/logger";
 
 interface RegisterReponse {
   accessToken: string;
@@ -75,6 +76,8 @@ export async function createRefreshToken(
   expiresAt.setDate(
     expiresAt.getDate() + getTTLInDays(env.JWT_REFRESH_EXPIRES_IN),
   );
+
+  logger.warn({ expiresAt }, "Creating refresh token");
 
   const tokenId = crypto.randomUUID();
 

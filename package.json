@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "pnpm -r --workspace-root=false run dev",
+    "dev": "pnpm -r --workspace-root=false --stream run dev",
     "build": "pnpm -r --workspace-root=false run build",
     "lint": "pnpm -r --workspace-root=false run lint",
     "format": "pnpm -r --workspace-root=false run format",

@@ -39,7 +39,7 @@ RefreshToken.init(
       allowNull: false,
     },
     tokenId: {
-      type: DataTypes.DATE,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     expiresAt: {

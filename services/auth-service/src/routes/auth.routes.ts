@@ -1,18 +1,13 @@
-import { apiHandler, validateRequest, z } from "@chatting/common";
+import { apiHandler, validateRequest } from "@chatting/common";
 import { Router } from "express";
+import { createUserSchema } from "../dtos/create-user.dto";
 import { register } from "../services/auth.service";
 
 export const authRouter: Router = Router();
 
 authRouter.post(
   "/register",
-  validateRequest({
-    body: z.object({
-      email: z.string(),
-      password: z.string().min(8),
-      displayName: z.string().min(3),
-    }),
-  }),
+  validateRequest({ body: createUserSchema }),
   apiHandler(async (req, res) => {
     const payload = req.body;
     const tokens = await register(payload);
