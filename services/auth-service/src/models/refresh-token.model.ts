@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { UserCredentials } from "./user-credentials.model";
 
 export interface RefreshTokenAttributes {
   id: string;
@@ -63,8 +62,3 @@ RefreshToken.init(
     tableName: "refresh_tokens",
   },
 );
-
-RefreshToken.belongsTo(UserCredentials, {
-  foreignKey: "userId",
-  as: "user",
-});

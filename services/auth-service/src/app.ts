@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { errorHandler } from "./middleware/error-handler";
 import { HttpError } from "@chatting/common";
+import { registerRoutes } from "./routes";
 
 export function createApp(): Application {
   const app = express();
@@ -24,6 +25,7 @@ export function createApp(): Application {
   app.use("/api/v1/error", () => {
     throw new HttpError(400, "Testing error", { cause: "Test" });
   });
+  registerRoutes(app);
 
   // ---- Error Handler -----
   app.use(errorHandler);

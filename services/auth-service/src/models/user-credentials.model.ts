@@ -1,6 +1,5 @@
-import { DataTypes, Model, type Optional } from "sequelize";
 import { sequelize } from "@/db/sequelize";
-import { RefreshToken } from "./refresh-token.model";
+import { DataTypes, Model, type Optional } from "sequelize";
 
 export interface UserCredentialsAttributes {
   id: string;
@@ -67,9 +66,3 @@ UserCredentials.init(
     tableName: "user_credentials",
   },
 );
-
-UserCredentials.hasMany(RefreshToken, {
-  foreignKey: "userId",
-  as: "refreshTokens",
-  onDelete: "CASCADE",
-});
