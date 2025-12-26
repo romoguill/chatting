@@ -1,16 +1,15 @@
 import type { RequestHandler } from "express";
 import { HttpError } from "../errors/http-error";
-
-const DEFAULT_HEADER_NAME = "x-service-auth" as const;
+import { AUTH_HEADER } from "../utils/constants";
 
 export interface ServiceAuthOpts {
-  headerName: string | typeof DEFAULT_HEADER_NAME;
+  headerName: string | typeof AUTH_HEADER;
   ignorePaths?: string[];
 }
 
 export function createServiceAuthMiddleware(
   token: string,
-  { headerName = DEFAULT_HEADER_NAME, ignorePaths = [] }: ServiceAuthOpts,
+  { headerName = AUTH_HEADER, ignorePaths = [] }: ServiceAuthOpts,
 ): RequestHandler {
   return (req, _res, next) => {
     if (ignorePaths) {
@@ -24,6 +23,6 @@ export function createServiceAuthMiddleware(
       return next(new HttpError(401, "Unauthorized"));
     }
 
-    next();
+    return next();
   };
 }

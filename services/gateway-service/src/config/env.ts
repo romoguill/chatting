@@ -9,6 +9,7 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
   AUTH_SERVICE_URL: z.url().default("http://localhost:4001"),
+  AUTH_TOKEN: z.string(),
 });
 
 type Env = z.infer<typeof envSchema>;
