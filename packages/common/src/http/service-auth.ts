@@ -9,7 +9,10 @@ export interface ServiceAuthOpts {
 
 export function createServiceAuthMiddleware(
   token: string,
-  { headerName = AUTH_HEADER, ignorePaths = [] }: ServiceAuthOpts,
+  { headerName, ignorePaths }: ServiceAuthOpts = {
+    headerName: AUTH_HEADER,
+    ignorePaths: [],
+  },
 ): RequestHandler {
   return (req, _res, next) => {
     if (ignorePaths) {

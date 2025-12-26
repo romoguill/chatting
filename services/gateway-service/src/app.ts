@@ -1,9 +1,10 @@
 import express, { type Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { HttpError } from "@chatting/common";
+import { createServiceAuthMiddleware, HttpError } from "@chatting/common";
 import { errorHandler } from "./middleware/error-handler";
 import { registerRoutes } from "./routes";
+import { env } from "./config/env";
 
 export function createApp(): Application {
   const app = express();
@@ -19,6 +20,7 @@ export function createApp(): Application {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(createServiceAuthMiddleware(env.AUTH_TOKEN));
 
   // ---- Routes ----
   app.use("/api/v1/health", (_req, res) => res.sendStatus(200));
