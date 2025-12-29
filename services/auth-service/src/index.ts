@@ -6,6 +6,7 @@ import { createApp } from "./app";
 import { closeDb, connectDb } from "./db/sequelize";
 import { syncModels } from "./models";
 import { SERVICE_NAME } from "./utils/constants";
+import { closePublisher, initPublisher } from "./messaging/event-publishing";
 
 const main = async () => {
   const app = createApp();
@@ -17,6 +18,14 @@ const main = async () => {
     await syncModels();
   } catch (error) {
     logger.error(error, `Error starting ${SERVICE_NAME}`);
+    process.exit(1);
+  }
+
+  // ---- Messaging connection ----
+  try {
+    await initPublisher();
+  } catch (error) {
+    logger.error(error, `${SERVICE_NAME} failed to initialize RabbitMQ`);
     process.exit(1);
   }
 
@@ -38,8 +47,8 @@ const main = async () => {
     logger.info({ serviceName: SERVICE_NAME }, "Shutting down");
 
     // TODO: Add shutdown logic
-    // Close DB,
-    Promise.all([closeDb()])
+    // Close DB, RabbitMQ
+    Promise.all([closeDb(), closePublisher()])
       .catch((error) => logger.error({ error }, "Error shutting down"))
       .finally(() => server.close());
   };
