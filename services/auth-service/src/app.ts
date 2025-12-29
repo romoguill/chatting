@@ -26,9 +26,13 @@ export function createApp(): Application {
   app.use("/api/v1/error", () => {
     throw new HttpError(400, "Testing error", { cause: "Test" });
   });
+
   registerRoutes(app, BASE_PATH);
 
   // ---- Error Handler -----
+  app.use((_req, res) => {
+    res.status(404).json({ message: "Not Found" });
+  });
   app.use(errorHandler);
 
   return app;

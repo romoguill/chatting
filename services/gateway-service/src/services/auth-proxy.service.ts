@@ -53,7 +53,7 @@ export const authProxyService = {
   async register(payload: CreateUserDto): Promise<AuthResponse> {
     try {
       const response = await client.post<AuthResponse>(
-        "/auth/register",
+        "/api/v1/auth/register",
         payload,
         authHeader,
       );
