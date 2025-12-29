@@ -4,7 +4,6 @@ import helmet from "helmet";
 import { errorHandler } from "./middleware/error-handler";
 import { HttpError } from "@chatting/common";
 import { registerRoutes } from "./routes";
-import { BASE_PATH } from "./utils/constants";
 
 export function createApp(): Application {
   const app = express();
@@ -22,12 +21,12 @@ export function createApp(): Application {
   app.use(express.urlencoded({ extended: true }));
 
   // ---- Routes ----
-  app.use("/api/v1/health", (_req, res) => res.sendStatus(200));
-  app.use("/api/v1/error", () => {
+  app.use("/health", (_req, res) => res.sendStatus(200));
+  app.use("/error", () => {
     throw new HttpError(400, "Testing error", { cause: "Test" });
   });
 
-  registerRoutes(app, BASE_PATH);
+  registerRoutes(app);
 
   // ---- Error Handler -----
   app.use((_req, res) => {

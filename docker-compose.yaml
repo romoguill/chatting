@@ -13,6 +13,18 @@ services:
     networks:
       - chatting_network
 
+  rabbitmq:
+    container_name: chatting_rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBIT_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - ${RABBITMQ_PORT:-5672}:5672
+      - ${RABBITMQ_MANAGEMENT_PORT:-15672}:15672
+    networks:
+      - chatting_network
+
 volumes:
   auth-db-data:
 
