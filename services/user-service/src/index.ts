@@ -4,6 +4,7 @@ import { IncomingMessage, ServerResponse } from "node:http";
 import { Server } from "node:https";
 import { createApp } from "./app";
 import { SERVICE_NAME } from "@/utils/constants";
+import { initDb } from "./db/sequelize";
 
 const main = async () => {
   const app = createApp();
@@ -11,6 +12,7 @@ const main = async () => {
 
   // ---- Start server ----
   try {
+    await initDb();
     server = app.listen(env.PORT, () =>
       logger.info(
         { port: env.PORT },

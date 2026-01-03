@@ -13,6 +13,20 @@ services:
     networks:
       - chatting_network
 
+  user-db:
+    container_name: chatting_user-db
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${USER_DB_NAME:-chatting_user}
+      POSTGRES_USER: ${USER_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD:-postgres}
+    ports:
+      - ${USER_DB_PORT:-5434}:5434
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - chatting_network
+
   rabbitmq:
     container_name: chatting_rabbitmq
     image: rabbitmq:3-management
@@ -27,6 +41,7 @@ services:
 
 volumes:
   auth-db-data:
+  user-db-data:
 
 networks:
   chatting_network:
