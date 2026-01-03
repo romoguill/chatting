@@ -12,6 +12,7 @@ import { Transaction } from "sequelize";
 import { env } from "../config/env";
 import { UserDto } from "../dtos/user.dto";
 import { logger } from "../utils/logger";
+import { publishUserRegistered } from "../messaging/event-publishing";
 
 interface RegisterReponse {
   accessToken: string;
@@ -55,6 +56,15 @@ export async function register({
       sub: user.id,
       tokenId: refreshTokenResult.tokenId,
     });
+
+    const userData = {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      createdAt: user.createdAt.toISOString(),
+    };
+
+    publishUserRegistered(userData);
 
     return {
       accessToken,

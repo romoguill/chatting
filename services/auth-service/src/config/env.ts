@@ -17,6 +17,7 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32),
   JWT_REFRESH_EXPIRES_IN: z.templateLiteral([z.number(), "d"]).default("30d"),
   RABBITMQ_URL: z.url(),
+  AUTH_TOKEN: z.string(),
 });
 
 type Env = z.infer<typeof envSchema>;

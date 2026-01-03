@@ -3,7 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import { errorHandler } from "./middleware/error-handler";
 import { createServiceAuthMiddleware, HttpError } from "@chatting/common";
-import { registerRoutes } from "./routes";
 import { env } from "./config/env";
 
 export function createApp(): Application {
@@ -20,15 +19,17 @@ export function createApp(): Application {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(createServiceAuthMiddleware(env.AUTH_TOKEN));
+  app.use(
+    createServiceAuthMiddleware(env.AUTH_TOKEN, {
+      ignorePaths: ["/users/health"],
+    }),
+  );
 
   // ---- Routes ----
   app.use("/health", (_req, res) => res.sendStatus(200));
   app.use("/error", () => {
     throw new HttpError(400, "Testing error", { cause: "Test" });
   });
-
-  registerRoutes(app);
 
   // ---- Error Handler -----
   app.use((_req, res) => {

@@ -3,18 +3,16 @@ import { HttpError } from "../errors/http-error";
 import { AUTH_HEADER } from "../utils/constants";
 
 export interface ServiceAuthOpts {
-  headerName: string | typeof AUTH_HEADER;
+  headerName?: string | typeof AUTH_HEADER;
   ignorePaths?: string[];
 }
 
 export function createServiceAuthMiddleware(
   token: string,
-  { headerName, ignorePaths }: ServiceAuthOpts = {
-    headerName: AUTH_HEADER,
-    ignorePaths: [],
-  },
+  opts?: ServiceAuthOpts,
 ): RequestHandler {
   return (req, _res, next) => {
+    const { headerName = AUTH_HEADER, ignorePaths = [] } = opts || {};
     if (ignorePaths) {
       return next();
     }
